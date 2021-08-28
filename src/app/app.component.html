@@ -6,9 +6,11 @@
 </header>
 
 <div class="container-fluid padding-bottom-60px">
-  <button class="btn custom-btn btn-margin"> Part 1 </button>
-  <button class="btn custom-btn btn-margin"> Part 2 </button>
-  <router-outlet></router-outlet>
+  <button class="btn custom-btn btn-margin" routerLink="/part1"> Part 1 </button>
+  <button class="btn custom-btn btn-margin" routerLink="/part2"> Part 2 </button>
+  <div class="margin-top-10px">
+    <router-outlet></router-outlet>
+  </div>
 </div>
 
 <footer class="bg-dark-custom">
