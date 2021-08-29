@@ -10,7 +10,8 @@ export class Part2Component implements AfterViewInit {
   @ViewChild('canvas') canvas: ElementRef | any;
   private ctx: CanvasRenderingContext2D | any;
   squares: any = [];
-  blueSq: any = [];
+  blueSq: any = []; // user selected coordinates
+  actualBlueSquares: any = []; // for actual squares to be colored
   center: any;
   cursorPos: any;
   radius: any;
@@ -52,11 +53,11 @@ export class Part2Component implements AfterViewInit {
   fillGrid() {
     this.ctx.clearRect(0, 0, 400, 400);
     for (let i = 0; i < this.squares.length; i++) {
-        if (this.isBlueSquare(i)) {
-          this.ctx.fillStyle = "blue";
-        } else {
-          this.ctx.fillStyle = "gray";
-        }
+      if (this.isBlueSquare(i)) {
+        this.ctx.fillStyle = "blue";
+      } else {
+        this.ctx.fillStyle = "gray";
+      }
 
       this.ctx.fillRect(this.squares[i].x, this.squares[i].y, 8, 8);
     }
@@ -64,7 +65,8 @@ export class Part2Component implements AfterViewInit {
 
   drawBlueCircle() {
     this.fillGrid();
-    this.radius = this.mathService.getDist(this.center.x, this.center.y, this.cursorPos.x, this.cursorPos.y);
+    this.getCenter();
+    this.getRadius();
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = "blue";
@@ -76,12 +78,49 @@ export class Part2Component implements AfterViewInit {
   isBlueSquare(index: any) {
     let x = this.squares[index].x;
     let y = this.squares[index].y;
-    for(let i = 0; i < this.blueSq.length; i++) {
+    for (let i = 0; i < this.blueSq.length; i++) {
       if (this.mathService.isPointNearCircle(this.blueSq[i], this.squares[index])) {
         return true;
       }
     }
     return false;
+  }
+
+  getCenter() {
+    let sumx = 0, sumy = 0
+    let blueSquares = [];
+    for (let i = 0; i < this.squares.length; i++) {
+      if (this.isBlueSquare(i)) {
+        blueSquares.push(this.squares[i]);
+      }
+    }
+    for (let i = 0; i < blueSquares.length; i++) {
+      sumx += blueSquares[i].x;
+      sumy += blueSquares[i].y;
+    }
+    this.actualBlueSquares = blueSquares;
+    let x = (sumx / blueSquares.length);
+    let y = (sumy / blueSquares.length);
+    this.center = {
+      'x': x,
+      'y': y
+    };
+    return;
+  }
+
+  getRadius() {
+    let distances = [];
+    for (let i = 0; i < this.actualBlueSquares.length; i++) {
+      let dist = this.mathService.getDist(this.actualBlueSquares[i].x, this.actualBlueSquares[i].y, this.center.x, this.center.y);
+      distances.push(dist);
+    }
+    let sum = 0;
+    for (let i = 0; i < distances.length; i++) {
+      sum += distances[i];
+    }
+    this.radius = (sum / distances.length);
+    return;
+
   }
 
 }
