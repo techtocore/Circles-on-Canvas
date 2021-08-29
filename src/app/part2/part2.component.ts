@@ -70,9 +70,7 @@ export class Part2Component implements AfterViewInit {
     this.getCenter();
     this.getRadius();
 
-    if (this.actualBlueSquares.length === 3) {
-      this.processThreePoints();
-    }
+    this.processPoints();
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = "blue";
@@ -92,6 +90,7 @@ export class Part2Component implements AfterViewInit {
     return false;
   }
 
+  // naive method degenerate cases
   getCenter() {
     let sumx = 0, sumy = 0
     let blueSquares = [];
@@ -114,6 +113,7 @@ export class Part2Component implements AfterViewInit {
     return;
   }
 
+  // naive method degenerate cases
   getRadius() {
     let distances = [];
     for (let i = 0; i < this.actualBlueSquares.length; i++) {
@@ -129,61 +129,81 @@ export class Part2Component implements AfterViewInit {
 
   }
 
-  processThreePoints() {
-    let x1 = this.actualBlueSquares[0].x;
-    let y1 = this.actualBlueSquares[0].y;
-    let x2 = this.actualBlueSquares[1].x;
-    let y2 = this.actualBlueSquares[1].y;
-    let x3 = this.actualBlueSquares[2].x;
-    let y3 = this.actualBlueSquares[2].y;
-
-    let x12 = (x1 - x2);
-    let x13 = (x1 - x3);
-    let y12 = (y1 - y2);
-    let y13 = (y1 - y3);
-    let y31 = (y3 - y1);
-    let y21 = (y2 - y1);
-    let x31 = (x3 - x1);
-    let x21 = (x2 - x1);
-
-    //x1^2 - x3^2
-    let sx13 = Math.pow(x1, 2) - Math.pow(x3, 2);
-
-    // y1^2 - y3^2
-    let sy13 = Math.pow(y1, 2) - Math.pow(y3, 2);
-
-    let sx21 = Math.pow(x2, 2) - Math.pow(x1, 2);
-    let sy21 = Math.pow(y2, 2) - Math.pow(y1, 2);
-
-    let f = ((sx13) * (x12)
-      + (sy13) * (x12)
-      + (sx21) * (x13)
-      + (sy21) * (x13))
-      / (2 * ((y31) * (x12) - (y21) * (x13)));
-    let g = ((sx13) * (y12)
-      + (sy13) * (y12)
-      + (sx21) * (y13)
-      + (sy21) * (y13))
-      / (2 * ((x31) * (y12) - (x21) * (y13)));
-
-    let c = -(Math.pow(x1, 2)) -
-      Math.pow(y1, 2) - 2 * g * x1 - 2 * f * y1;
-
-    // eqn of circle is
-    // x^2 + y^2 + 2*g*x + 2*f*y + c = 0
-    // where centre is (x = -g, y = -f) and radius r
-    // as r^2 = h^2 + k^2 - c
-    let x = -g;
-    let y = -f;
-    let sqr_of_r = x * x + y * y - c;
-
-    // r is the radius
-    if (!isNaN(sqr_of_r)) {
-      this.radius = Math.sqrt(sqr_of_r);
-      this.center = {
-        'x': x,
-        'y': y
-      };
-    }
+  linearSolve2x2(matrix: any, vector: any) {
+    var det = matrix[0] * matrix[3] - matrix[1] * matrix[2];
+    if (det < 1e-8) return false; //no solution
+    var y = (matrix[0] * vector[1] - matrix[2] * vector[0]) / det;
+    var x = (vector[0] - matrix[1] * y) / matrix[0];
+    return [x, y];
   }
+
+  // Fit circle based on Least-Squares method
+  processPoints() {
+    let points = this.actualBlueSquares;
+    var result: any = {
+      success: false,
+      center: { x: 0, y: 0 },
+      radius: 0,
+    };
+
+    // means
+    var m = points.reduce(function (p: any, c: any) {
+      return {
+        x: p.x + c.x / points.length,
+        y: p.y + c.y / points.length
+      };
+    }, { x: 0, y: 0 });
+
+    // centered points
+    var u = points.map(function (e: any) {
+      return {
+        x: e.x - m.x,
+        y: e.y - m.y
+      };
+    });
+
+    // solve linear equation
+    var Sxx = u.reduce(function (p: any, c: any) {
+      return p + c.x * c.x;
+    }, 0);
+
+    var Sxy = u.reduce(function (p: any, c: any) {
+      return p + c.x * c.y;
+    }, 0);
+
+    var Syy = u.reduce(function (p: any, c: any) {
+      return p + c.y * c.y;
+    }, 0);
+
+    var v1 = u.reduce(function (p: any, c: any) {
+      return p + 0.5 * (c.x * c.x * c.x + c.x * c.y * c.y);
+    }, 0);
+
+    var v2 = u.reduce(function (p: any, c: any) {
+      return p + 0.5 * (c.y * c.y * c.y + c.x * c.x * c.y);
+    }, 0);
+
+    // console.log([Sxx, Sxy, Sxy, Syy], [v1, v2]);
+    var sol = this.linearSolve2x2([Sxx, Sxy, Sxy, Syy], [v1, v2]);
+
+    if (sol === false) {
+      //not enough points / points are colinears
+      return result;
+    }
+
+    result.success = true;
+
+    //compute radius from circle equation
+    var radius2 = sol[0] * sol[0] + sol[1] * sol[1] + (Sxx + Syy) / points.length;
+    result.radius = Math.sqrt(radius2);
+
+    result.center.x = sol[0] + m.x;
+    result.center.y = sol[1] + m.y;
+    console.log(result);
+
+    this.center = result.center;
+    this.radius = result.radius;
+
+  }
+
 }
