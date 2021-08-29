@@ -114,13 +114,15 @@ export class Part1Component implements AfterViewInit {
   }
 
   drawBlueCircle() {
-    this.fillGrid();
-    this.radius = this.mathService.getDist(this.center.x, this.center.y, this.cursorPos.x, this.cursorPos.y);
-
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = "blue";
-    this.ctx.arc(this.center.x, this.center.y, this.radius, 0, 2 * Math.PI);
-    this.ctx.stroke();
+    try {
+      this.radius = this.mathService.getDist(this.center.x, this.center.y, this.cursorPos.x, this.cursorPos.y);
+      this.fillGrid();
+      this.ctx.beginPath();
+      this.ctx.strokeStyle = "blue";
+      this.ctx.arc(this.center.x, this.center.y, this.radius, 0, 2 * Math.PI);
+      this.ctx.stroke();
+    } catch (error) {
+    }
     return;
   }
 

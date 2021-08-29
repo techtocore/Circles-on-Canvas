@@ -38,6 +38,8 @@ export class Part2Component implements AfterViewInit {
   drawGrid() {
     this.ctx.clearRect(0, 0, 400, 400);
     this.squares = [];
+    this.actualBlueSquares = [];
+    this.blueSq = [];
     for (let i = 0; i <= 400; i += 24) {
       for (let j = 0; j <= 400; j += 24) {
         this.ctx.fillStyle = "gray";
