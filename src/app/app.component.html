@@ -14,6 +14,18 @@
 
 <div class="container-fluid padding-bottom-60px">
   <div class="margin-top-10px">
+    <div class="row" *ngIf="isHomeRoute()">
+      <div class="col-2"></div>
+      <div class="alert alert-primary col-8 margin-top-60px" role="alert">
+        This application was created for the Neocis Software Assessment.
+        <br>
+        Click on 'Part 1' or 'Part 2' to navigate to the respective sections and try out the code.
+        <br>
+        <br>
+        - Made by Akash Ravi (akashkravi@gmail.com)
+      </div>
+      <div class="col-2"></div>
+    </div>
     <router-outlet></router-outlet>
   </div>
 </div>
