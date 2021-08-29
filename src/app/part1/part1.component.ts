@@ -93,6 +93,7 @@ export class Part1Component implements AfterViewInit {
     }
   }
 
+  // re-creates the grid with blue squares and draws the red lineS
   fillGrid() {
     this.ctx.clearRect(0, 0, 400, 400);
     this.blueSq = [];
@@ -113,6 +114,7 @@ export class Part1Component implements AfterViewInit {
     }
   }
 
+  // draws the blue circle based on cursor inputs
   drawBlueCircle() {
     try {
       this.radius = this.mathService.getDist(this.center.x, this.center.y, this.cursorPos.x, this.cursorPos.y);
@@ -126,8 +128,10 @@ export class Part1Component implements AfterViewInit {
     return;
   }
 
+  // checks if a square is supposed to marked blue - determined based on proximity to circle
   isBlueSquare(index: any) {
     let point;
+    // check points in all possible angles 
     for (let k = 0; k < 360; k += 5) {
       let angle = k * (Math.PI / 180);
       point = {
@@ -144,6 +148,7 @@ export class Part1Component implements AfterViewInit {
     return false;
   }
 
+  // draws bounding red circles
   drawRedCircles() {
     let r1 = this.getOuterCircleRadius();
     let r2 = this.getInnerCircleRadius();
@@ -162,7 +167,7 @@ export class Part1Component implements AfterViewInit {
     return;
   }
 
-  // return radius for the outer red circle
+  // return radius for the outer red circle - based on max dist between circle and a blue square
   getOuterCircleRadius() {
     let ans = this.radius;
     for (let i = 0; i < this.blueSq.length; i++) {
@@ -172,7 +177,7 @@ export class Part1Component implements AfterViewInit {
   }
 
 
-  // return radius for the inner red circle
+  // return radius for the inner red circle - based on min dist between circle and a blue square
   getInnerCircleRadius() {
     let ans = this.radius;
     for (let i = 0; i < this.blueSq.length; i++) {

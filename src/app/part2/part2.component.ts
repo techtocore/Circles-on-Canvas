@@ -52,6 +52,7 @@ export class Part2Component implements AfterViewInit {
     }
   }
 
+  // fills the grid with squares based on its color
   fillGrid() {
     this.ctx.clearRect(0, 0, 400, 400);
     for (let i = 0; i < this.squares.length; i++) {
@@ -65,6 +66,7 @@ export class Part2Component implements AfterViewInit {
     }
   }
 
+  // creates a circle based on calculated center and radius
   drawBlueCircle() {
     this.fillGrid();
     this.getCenter();
@@ -79,6 +81,7 @@ export class Part2Component implements AfterViewInit {
     return;
   }
 
+  // used to check if a square is selected based on its distance to clicked point
   isBlueSquare(index: any) {
     let x = this.squares[index].x;
     let y = this.squares[index].y;
