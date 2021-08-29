@@ -132,7 +132,7 @@ export class Part1Component implements AfterViewInit {
         'x': this.center.x + (Math.cos(angle) * this.radius),
         'y': this.center.y + (Math.sin(angle) * this.radius)
       }
-      if (this.isPointNearCircle(point, this.squares[index])) {
+      if (this.mathService.isPointNearCircle(point, this.squares[index])) {
         if (!this.blueSq.includes(this.squares[index])) {
           this.blueSq.push(this.squares[index]);
         }
@@ -141,16 +141,6 @@ export class Part1Component implements AfterViewInit {
     }
     return false;
   }
-
-  // checks if a square is with a certain distance of the cicle.
-  // the number '10' is determined by the size of the square
-  isPointNearCircle(point: any, square: any) {
-    if (Math.abs(point.x - square.x) < 10 && Math.abs(point.y - square.y) < 10) {
-      return true;
-    }
-    return false;
-  }
-
 
   drawRedCircles() {
     let r1 = this.getOuterCircleRadius();
