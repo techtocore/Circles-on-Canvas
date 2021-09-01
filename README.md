@@ -1,8 +1,4 @@
-# Cirles On Canvas - Submission for the Neocis Software Assessment
-
-
-Link to application: https://neocis-assessment-akash.netlify.app/ 
-Both Part 1 and Part 2 will be available on the link.
+# Cirles On Canvas
 
 ## Development server
 
